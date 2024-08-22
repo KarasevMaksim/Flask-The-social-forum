@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+
+
+{% block content %}
+
+{% if type_post == 'media' %}
+
+    <h1>Добавить свой контент</h1>
+    <form action="" method="post" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+    <p>{{ form.name_content.label }}<br>
+        {{ form.name_content() }}</p>
+    <p>{{ form.tag_content.label }}<br>
+        {{ form.tag_content() }}</p>
+    <p>{{ form.upload() }}</p>
+    <p>{{ form.private.label }} {{ form.private() }}</p>
+    <p>{{ form.nsfw.label }} {{ form.nsfw() }}</p>
+    <p>{{ form.type_content.label }} {{ form.type_content() }}</p>
+    <p>{{ form.submit(type="submit", class="btn") }}</p>
+    </form>
+
+{% elif type_post == 'text' %}
+
+    <h1>Добавить свой контент</h1>
+    <form action="" method="post" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+    <p>{{ form.name_content.label }}<br>
+        {{ form.name_content() }}</p>
+    <p>{{ form.text_content.label }}<br>
+        {{ form.text_content() }}</p>
+    <p>{{ form.tag_content.label }}<br>
+        {{ form.tag_content() }}</p>
+    <p>{{ form.upload() }}</p>
+    <p>{{ form.private.label }} {{ form.private() }}</p>
+    <p>{{ form.nsfw.label }} {{ form.nsfw() }}</p>
+    <p>{{ form.submit(type="submit", class="btn") }}</p>
+    </form>
+    
+{% endif %}
+
+{% endblock%}

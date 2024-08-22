@@ -1,0 +1,6 @@
+.env
+ToDo.txt
+__pycache__
+/.venv/
+/app/static/js/
+/app/static/img/user_content/

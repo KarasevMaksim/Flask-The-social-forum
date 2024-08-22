@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}" />
+    <link rel="stylesheet" href="{{url_for('static', filename='css/main.css')}}" />
+    <title>{{ title }}</title>
+  </head>
+  <body>
+    <header>
+      <div class="header_main_container">
+        <div class="wrapper">
+            <div class="header_elements_container">
+                <a class="per" href="{{ url_for('index') }}">
+                    <img class="logo" src="{{ logo_img }}" alt="logo"/>
+                </a>
+                {% for item in headers_list %}
+                  <a class="deltest" href="{{ url_for(item.name) }}">{{ item.name.capitalize() }}</a>
+                {% endfor %}
+            </div>
+          <div class="w">
+            {% if not current_user.is_authenticated %}
+              <a class="deltest" href="{{ url_for('login') }}">Login</a>
+              <a class="deltest" href="{{ url_for('registration') }}">Registration</a>
+            {% else %}
+              <a class="deltest" href="{{ url_for('logout') }}">Logout</a>
+              <a class="deltest" href="{{ url_for('profile', username=current_user.username) }}">My profile</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </header>
+    <main>
+      {% block content %}
+      {% endblock%}
+    </main>
+    <footer>
+    </footer>
+    <script src=""></script>
+  </body>
+</html>

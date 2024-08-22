@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+
+
+{% block content %}
+
+<h1>{{ username }}</h1>
+<br>
+{% if current_user.username == username %}
+    <a href="{{url_for('create_media')}}">Создать media пост</a>
+    <a href="{{url_for('create_post')}}">Создать текстовый пост</a>
+    <a href="{{url_for('edit_profile')}}">Редактировать профиль</a>
+    <br>
+    <br>
+{% endif %}
+
+
+<div>
+    {% for content in contents %}
+    {% if (current_user.username != username and not content.is_private)
+        or (current_user.username == username) %}
+    <div>
+        <p>
+            <h3>
+                {{ content.name }} {{ content.timestamp.strftime('%d-%m-%Y') }}
+            </h3>
+        </p>
+        {% if content.post %}
+            <p>
+                {{ content.post }}
+            </p>
+        {% endif %}
+
+
+        {% if content.link_for_content %}
+            {% for link in content.link_for_content %}
+                <p>
+                    <br>
+                    <img src="{{ url_for('static', filename=link.name) }}" alt="img"/>
+                </p>
+            {% endfor %}
+        {% endif %}
+
+
+        {% if content.get_tag %}
+            <p>
+                {% for tag in content.get_tag %}
+
+                    <span> {{ tag.name }} </span>
+
+                {% endfor %}
+            </p>
+        {% endif %}
+        
+
+        </div>
+    {% endif %}
+    {% endfor %}
+    
+
+</div>
+{% endblock%}

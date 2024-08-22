@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+
+{% if current_user.is_authenticated %}
+    <h1>{{ current_user.username }}</h1>
+{% endif %}
+<div>
+    {% for content in contents %}
+    <div>
+        <p>
+            <h2>
+                {% set name = content.users.username %}
+                <a href="{{url_for('profile', username=name)}}">{{ name }}</a>
+            </h2>
+        </p>
+        <p>
+            <h3>{{ content.name }} {{ content.timestamp.strftime('%d-%m-%Y') }}</h3>
+        </p>
+        {% if content.post %}
+            <p>
+                {{ content.post }}
+            </p>
+        {% endif %}
+
+
+        {% if content.link_for_content %}
+            {% for link in content.link_for_content %}
+                <p>
+                    <br>
+                    <img src="{{ url_for('static', filename=link.name) }}" alt="img"/>
+                </p>
+            {% endfor %}
+        {% endif %}
+
+
+        {% if content.get_tag %}
+            <p>
+                {% for tag in content.get_tag %}
+
+                    <span> {{ tag.name }} </span>
+
+                {% endfor %}
+            </p>
+        {% endif %}
+        
+        </div>
+    {% endfor %}
+
+
+</div>
+
+
+{% endblock%}

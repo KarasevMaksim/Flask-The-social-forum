@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+    <h1>Редактор профиля</h1>
+    <form action="" method="post" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <br>
+        <p>
+            <h3>Изменить аватар</h3>
+            {{ form.upload(class="btn") }}
+        </p>
+        <p>
+            {{ form.username.label }}<br>
+            {{ form.username() }}
+        </p>
+        <p>
+            {{ form.email.label }}<br>
+            {{ form.email() }}
+        </p>
+        <p>
+            {{ form.about_me.label }}<br>
+            {{ form.about_me() }}
+        </p>
+        <p>
+            {{ form.submit(type="submit", class="btn") }}
+        </p>
+        {% for message in get_flashed_messages() %}
+            <div style="color: red;">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </form>
+
+{% endblock%}

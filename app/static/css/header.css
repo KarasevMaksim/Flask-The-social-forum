@@ -1,0 +1,163 @@
+* {
+    padding: 0px;
+    margin: 0px;
+}
+
+/* heigft: fit-content;
+width: fit-content;
+можно задать большой контейнер и итемам задать
+размер по ширине контента
+align-self: center; Управление отдельным контейнером
+flex-wrap: wrap; Перенос контента на новую строку,
+при переполнении контента
+flex-grow:1; Растянуть отдельный элемент, прописывается
+отдельным классом к нужному элементу
+column-gap: 30px;
+row-gap: 40px;
+justify-content: centr;
+
+Второй метод для флексов
+.wrapper {
+    width: 600px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center, flex-start, flex-end;
+}
+
+.item1 {
+    flex: 1; Занимаемая область отдельного итема
+    order: 1; Позиция блока 
+}
+.item2 {
+    flex: 1;
+}
+
+гриды
+display: grid;
+grid-template-columns: repeat(4 или auto-fill, 270px);
+column-gap: 30px;
+row-gap; 40px;
+или gap: 40px 30px;
+justify-content: centr;
+*/
+
+.header_main_container {
+    padding: 20px;
+    padding-left: 40px;
+    background: linear-gradient(0deg, #192529 0%, #181f21 52%);}
+
+.wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: aliceblue;
+    font-size: 40px;
+    column-gap: 40px;
+}
+
+
+
+.header_elements_container {
+    display: flex;
+    justify-content: flex-start; /* Горизонтальное центрирование */
+    align-items: center;
+    color: aliceblue;
+    font-size: 40px;
+    column-gap: 40px;
+}
+
+.header_elements_container a {
+    color: aliceblue;
+    text-decoration: none;
+}
+
+
+
+.header_elements_container a:hover{
+    color: red;
+    cursor: pointer;
+}
+
+.w a {
+    display: flex;
+    color: aliceblue;
+    text-decoration: none;
+}
+
+
+.w a:hover{
+    color: red;
+    cursor: pointer;
+}
+
+
+.logo {
+    width:  200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* FlexBox Froggy
+justify-content, которое выравнивает элементы горизонтально
+и принимает следующие значения:
+flex-start: элементы выравниваются по левой стороне контейнера.
+flex-end: элементы выравниваются по правой стороне контейнера.
+center: элементы выравниваются по центру контейнера.
+space-between: элементы отображаются с одинаковыми отступами между ними.
+space-around: элементы отображаются с одинаковыми отступами вокруг них.
+
+align-content Тоже самое, только по вертикали
+flex-start: ряды группируются в верхней части контейнера.
+flex-end: ряды группируются в нижней части контейнера.
+center: ряды группируются вертикально по центру контейнера.
+space-between: ряды отображаются с одинаковыми расстояниями между ними.
+space-around: ряды отображаются с одинаковыми расстояниями вокруг них.
+stretch: ряды растягиваются, чтобы заполнить контейнер равномерно.
+
+
+align-items, Это свойство CSS выравнивает элементы вертикально
+и принимаетследующие значения:
+flex-start: элементы выравниваются по верхнему краю контейнера.
+flex-end: элементы выравниваются по нижнему краю контейнера.
+center: элементы выравниваются вертикально по центру контейнера.
+baseline: элементы отображаются на базовой линии контейнера.
+stretch: элементы растягиваются, чтобы заполнить контейнер.
+
+
+flex-direction. Это свойство CSS задает направление,
+в котором будут расположены элементы в контейнере,
+горизонтально или вертикально и принимает следующие значения:
+row: элементы размещаются по направлению текста.
+row-reverse: элементы отображаются в обратном порядке к направлению текста.
+column: элементы располагаются сверху вниз.
+column-reverse: элементы располагаются снизу вверх.
+
+свойство, которое ты можешь применить к определенному элементу
+— это align-self.Это свойство принимает те же значения,
+что и align-items.
+
+flex-wrap Для выравнивания при переполнеии контента:
+nowrap: размеры элементов устанавливаются автоматически, чтобы они поместились в один ряд.
+wrap: элементы автоматически переносятся на новую строку.
+wrap-reverse: элементы автоматически переносятся на новую строку, но строки расположены в обратном порядке.
+
+
+flex-flow: wrap column - объединяет 2 свойства в одно
+flex-wrap и flex-direction
+
+
+*/
