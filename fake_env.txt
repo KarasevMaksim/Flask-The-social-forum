@@ -1,0 +1,2 @@
+SECRET_KEY=dsafqdsaf2e42342sdfsdf23r23
+DATABASE_URL=mysql+pymysql://root:qwe123@localhost:3306/first_db
