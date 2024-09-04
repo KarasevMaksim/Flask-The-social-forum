@@ -5,11 +5,11 @@ import io
 from flask import current_app, url_for
 from flask_login import current_user
 from PIL import Image
-from app.models import Users
+from app.models import Users, Sections
 
 
-def get_headers(db, model):
-    return db.session.query(model).all()
+def get_headers():
+    return Sections.query.all()
 
 
 def get_avatar(username):
