@@ -37,7 +37,7 @@ def index():
         'index.html',
         title='Melanholy',
         logo_img=url_for('static', filename='img/page_img/main.gif'),
-        headers_list=get_headers(db, Sections),
+        headers_list=get_headers(),
         contents=contents
     )
 
@@ -70,7 +70,7 @@ def login():
         title='Login',
         form=form,
         logo_img=url_for('static', filename='img/app_img/tech_1.gif'),
-        headers_list=get_headers(db, Sections)
+        headers_list=get_headers()
     )
 
 
@@ -108,7 +108,7 @@ def registration():
         'registration.html',
         title='Registration',
         logo_img=url_for('static', filename='img/app_img/tech_1.gif'),
-        headers_list=get_headers(db, Sections),
+        headers_list=get_headers(),
         form=form
     )
 
@@ -122,7 +122,7 @@ def profile(username):
     return render_template(
         'profile.html',
         username=user.username,
-        headers_list=get_headers(db, Sections),
+        headers_list=get_headers(),
         logo_img=get_avatar(username),
         contents=contents
     )
@@ -218,7 +218,7 @@ def create_media():
     return render_template(
         'create_post.html',
         title='Create media',
-        headers_list=get_headers(db, Sections),
+        headers_list=get_headers(),
         form=form, type_post='media',
         logo_img=get_avatar(current_user.username)
     )
@@ -272,7 +272,7 @@ def create_post():
     return render_template(
         'create_post.html',
         title='Create post',
-        headers_list=get_headers(db, Sections),
+        headers_list=get_headers(),
         form=form, type_post='text',
         logo_img=get_avatar(current_user.username)
     )
@@ -296,7 +296,7 @@ def pictures():
         'sections.html',
         title='Pictures',
         logo_img=url_for('static', filename='img/page_img/pictures.gif'),
-        headers_list=get_headers(db, Sections),
+        headers_list=get_headers(),
         contents=contents
     )
 
@@ -314,7 +314,7 @@ def videos():
         'sections.html',
         title='Videos',
         logo_img=url_for('static', filename='img/page_img/videos.gif'),
-        headers_list=get_headers(db, Sections),
+        headers_list=get_headers(),
         contents=contents
     )
 
@@ -332,7 +332,7 @@ def games():
         'sections.html',
         title='Games',
         logo_img=url_for('static', filename='img/page_img/games.gif'),
-        headers_list=get_headers(db, Sections),
+        headers_list=get_headers(),
         contents=contents
     )
 
@@ -350,7 +350,7 @@ def posts():
         'sections.html',
         title='Posts',
         logo_img=url_for('static', filename='img/page_img/noted.gif'),
-        headers_list=get_headers(db, Sections),
+        headers_list=get_headers(),
         contents=contents
     )
 
@@ -367,7 +367,7 @@ def nsfw():
         'sections.html',
         title='Nsfw',
         logo_img=url_for('static', filename='img/page_img/nsfw.gif'),
-        headers_list=get_headers(db, Sections),
+        headers_list=get_headers(),
         contents=contents
     )
 
