@@ -17,7 +17,8 @@ from app.forms import (
     DeleatPost
 )
 from app.funcs import (
-    get_headers, set_new_avatar, get_avatar, save_content, resized_image
+    get_headers, set_new_avatar, get_avatar, save_content, resized_image,
+    delete_file_in_dir
 )
 
 
@@ -181,6 +182,8 @@ def delete_post():
     if form.confirm.data:
         post = UserContents.query.filter(UserContents.id == post_id).first()
         link_contents = LinkContents.query.filter(LinkContents.content_id == post_id).all()
+        
+        delete_file_in_dir(link_contents)
         
         for link in link_contents:
             db.session.delete(link)

@@ -120,3 +120,17 @@ def save_content(*args):
     )
     
     return path_to_save, path_to_db
+
+
+def delete_file_in_dir(dir_links):
+    for link in dir_links:
+        full_path = os.path.join(
+        current_app.root_path,
+        'static',
+        link.name
+        ).replace('\\', '/')
+        
+        try:
+            os.remove(full_path)
+        except Exception:
+            pass
