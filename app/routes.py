@@ -176,8 +176,18 @@ def edit_profile():
 def delete_post():
     form = DeleatPost()
     redirect_url = request.form.get('redirect_url')
+    post_id = request.form.get('post_id')
     
     if form.confirm.data:
+        post = UserContents.query.filter(UserContents.id == post_id).first()
+        link_contents = LinkContents.query.filter(LinkContents.content_id == post_id).all()
+        
+        for link in link_contents:
+            db.session.delete(link)
+            
+        db.session.delete(post)
+        db.session.commit()
+        
         return redirect(redirect_url)
     
     return redirect(redirect_url)
