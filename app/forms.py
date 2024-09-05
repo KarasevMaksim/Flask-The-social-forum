@@ -134,3 +134,8 @@ class ContentFormPost(FlaskForm):
     private = BooleanField('Приватный контент?')
     nsfw = BooleanField('Это NSFW?')
     submit = SubmitField('Загрузить')
+    
+
+class DeleatPost(FlaskForm):
+    confirm = BooleanField('Удалить пост?')
+    submit = SubmitField('Удалить!')
