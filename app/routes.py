@@ -181,7 +181,9 @@ def delete_post():
     
     if form.confirm.data:
         post = UserContents.query.filter(UserContents.id == post_id).first()
-        link_contents = LinkContents.query.filter(LinkContents.content_id == post_id).all()
+        link_contents = LinkContents.query.filter(
+            LinkContents.content_id == post_id
+            ).all()
         
         delete_file_in_dir(link_contents)
         
