@@ -52,6 +52,17 @@
             </p>
         {% endif %}
         
+        {% if current_user.username == username %}
+            <div>
+                <form action="{{ url_for('delete_post') }}" method="post">
+                    {{ deleat_form.hidden_tag() }}
+                    <input type="hidden" name="redirect_url" value="{{ request.url }}">
+                    <input type="hidden" name="post_id" value="{{ content.id }}">
+                    <p>{{ deleat_form.confirm.label }} {{ deleat_form.confirm() }}</p>
+                    <p>{{ deleat_form.submit(type="submit", class="btn") }}</p>
+                    </form>
+            </div>
+        {% endif %}
 
         </div>
     {% endif %}

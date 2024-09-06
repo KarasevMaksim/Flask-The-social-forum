@@ -13,10 +13,12 @@ from app.models import (
     Users, UserContents, Sections, LinkContents, Tags
 )
 from app.forms import (
-    LoginForm, RegForm, ContentFormMedia, ContentFormPost, EditProfileForm
+    LoginForm, RegForm, ContentFormMedia, ContentFormPost, EditProfileForm,
+    DeleatPost
 )
 from app.funcs import (
-    get_headers, set_new_avatar, get_avatar, save_content, resized_image
+    get_headers, set_new_avatar, get_avatar, save_content, resized_image,
+    delete_file_in_dir
 )
 
 
@@ -116,6 +118,7 @@ def registration():
 @app.route('/profile/<username>')
 @login_required
 def profile(username):
+    deleat_form = DeleatPost()
     user = Users.query.filter(Users.username == username).first()
     contents = user.user_contents[::-1]
     
@@ -124,7 +127,8 @@ def profile(username):
         username=user.username,
         headers_list=get_headers(),
         logo_img=get_avatar(username),
-        contents=contents
+        contents=contents,
+        deleat_form = deleat_form
     )
 
     
@@ -167,6 +171,34 @@ def edit_profile():
         logo_img=get_avatar(current_user.username)
     )
 
+
+@app.route('/delete_post', methods=['POST'])
+@login_required
+def delete_post():
+    form = DeleatPost()
+    redirect_url = request.form.get('redirect_url')
+    post_id = request.form.get('post_id')
+    
+    if form.confirm.data:
+        post = UserContents.query.filter(UserContents.id == post_id).first()
+        if current_user.id == post.user_id:
+            link_contents = LinkContents.query.filter(
+            LinkContents.content_id == post_id
+            ).all()
+        
+            delete_file_in_dir(link_contents)
+        
+            for link in link_contents:
+                db.session.delete(link)
+            
+            db.session.delete(post)
+            db.session.commit()
+        
+            return redirect(redirect_url)
+    
+    return redirect(redirect_url)
+        
+    
 
 @app.route('/create_media', methods=['GET', 'POST'])
 @login_required
