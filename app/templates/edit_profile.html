@@ -11,6 +11,11 @@
             <h3>Изменить аватар</h3>
             {{ form.upload(class="btn") }}
         </p>
+        {% for error in form.upload.errors %}
+            <div class="alert alert-danger" style="color: red;" role="alert">
+                {{ error }}
+            </div>
+        {% endfor %}
         <p>
             {{ form.username.label }}<br>
             {{ form.username() }}

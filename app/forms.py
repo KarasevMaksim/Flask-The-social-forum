@@ -7,7 +7,9 @@ from wtforms import (
 from wtforms.validators import (
     ValidationError, DataRequired, Email, Length, EqualTo
 )
-from flask_wtf.file import FileField, FileRequired, MultipleFileField
+from flask_wtf.file import (
+    FileField, FileRequired, MultipleFileField, FileAllowed
+)
 from app import db
 from app.models import Users
 
@@ -61,7 +63,7 @@ class RegForm(FlaskForm):
         
         
 class EditProfileForm(FlaskForm):
-    upload = FileField('Выберите файл')
+    upload = FileField('Выберите файл', validators=[FileAllowed(['jpg', 'png', 'jepeg', 'gif'], 'Только изображения!')])
     username = StringField('Изменить имя профиля', validators=[DataRequired()])
     email = StringField('Изменить email адресс', validators=[DataRequired()])
     about_me = TextAreaField('Изменить информацию обо мне', validators=[Length(min=0, max=140)])
@@ -71,6 +73,15 @@ class EditProfileForm(FlaskForm):
         super().__init__(*args, **kwargs)
         self.original_username = original_username
         self.original_email = original_email
+        
+    def validate_file(self, upload):
+        MAX_FILE_SIZE = 2 * 1024 * 1024  # 2 MB
+        if upload.data:
+            file_size = len(upload.data.read())
+            print('\n\n\n', file_size)
+            upload.data.seek(0)  # Сброс указателя файла
+            if file_size > MAX_FILE_SIZE:
+                raise ValidationError('Размер файла должен быть меньше 2 MB.')
 
     def validate_username(self, username):
         if username.data != self.original_username:
