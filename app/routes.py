@@ -90,22 +90,18 @@ def registration():
     form = RegForm()
     
     if form.validate_on_submit():
-        if form.site_rules.data:
-            try:
-                user = Users()
-                user.username = form.username.data
-                user.email = form.email.data
-                user.set_password(form.password1.data)
-                db.session.add(user)
-                db.session.commit()
-                return redirect(url_for('login'))
-            except Exception as err:
-                db.session.rollback()
-                print(err)
-                
-        flash('Вы обязаны согласиться с правилами сайта!')
-        return redirect(url_for('registration'))
-    
+        try:
+            user = Users()
+            user.username = form.username.data
+            user.email = form.email.data
+            user.set_password(form.password1.data)
+            db.session.add(user)
+            db.session.commit()
+            return redirect(url_for('login'))
+        except Exception as err:
+            db.session.rollback()
+            print(err)
+                   
     return render_template(
         'registration.html',
         title='Registration',

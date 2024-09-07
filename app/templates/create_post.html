@@ -11,8 +11,15 @@
     {{ form.hidden_tag() }}
     <p>{{ form.name_content.label }}<br>
         {{ form.name_content() }}</p>
-    <p>{{ form.tag_content.label }}<br>
-        {{ form.tag_content() }}</p>
+    <p>
+        {{ form.tag_content.label }}<br>
+        {{ form.tag_content() }}
+        {% for error in form.tag_content.errors %}
+            <div class="alert alert-danger" style="color: red;" role="alert">
+                {{ error }}
+            </div>
+        {% endfor %}
+    </p>
     <p>
         {{ form.upload() }}
         {% for error in form.upload.errors %}
@@ -36,8 +43,15 @@
         {{ form.name_content() }}</p>
     <p>{{ form.text_content.label }}<br>
         {{ form.text_content() }}</p>
-    <p>{{ form.tag_content.label }}<br>
-        {{ form.tag_content() }}</p>
+    <p>
+        {{ form.tag_content.label }}<br>
+        {{ form.tag_content() }}
+        {% for error in form.tag_content.errors %}
+            <div class="alert alert-danger" style="color: red;" role="alert">
+                {{ error }}
+            </div>
+        {% endfor %}
+    </p>
     <p>
         {{ form.upload() }}
         {% for error in form.upload.errors %}
