@@ -1,6 +1,7 @@
 import sqlalchemy as sa
 
 from urllib.parse import urlsplit
+from werkzeug.utils import secure_filename
 from flask import (
     render_template, url_for, redirect, abort, flash, request
 )
@@ -75,6 +76,7 @@ def login():
 
 
 @app.route('/logout')
+@login_required
 def logout():
     logout_user()
     return redirect(url_for('index'))
@@ -136,7 +138,8 @@ def edit_profile():
     if form.validate_on_submit():
         if form.upload.data:
             file = form.upload.data
-            path_to_save, path_to_db = set_new_avatar(file.filename)
+            path_to_save, path_to_db = set_new_avatar(secure_filename(
+                                                                file.filename))
             file, save_gif = resized_image(file)
             
             if not save_gif:

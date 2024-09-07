@@ -2,6 +2,7 @@ import secrets
 import os
 import io
 
+from werkzeug.utils import secure_filename
 from flask import current_app, url_for
 from flask_login import current_user
 from PIL import Image
@@ -91,7 +92,7 @@ def resized_image(img, x=300, y=300):
 def save_content(*args):
     new_files_name = tuple(
         map(
-            lambda file: f"{secrets.token_hex(10)}{os.path.splitext(file.filename)[1]}",
+            lambda file: f"{secrets.token_hex(10)}{os.path.splitext(secure_filename(file.filename))[1]}",
             args,
         )
     )
