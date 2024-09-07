@@ -1,3 +1,5 @@
+import os
+
 import sqlalchemy as sa
 from flask_wtf import FlaskForm
 from wtforms import (
@@ -74,14 +76,15 @@ class EditProfileForm(FlaskForm):
         self.original_username = original_username
         self.original_email = original_email
         
-    def validate_file(self, upload):
-        MAX_FILE_SIZE = 2 * 1024 * 1024  # 2 MB
-        if upload.data:
-            file_size = len(upload.data.read())
-            print('\n\n\n', file_size)
-            upload.data.seek(0)  # Сброс указателя файла
+    def validate_upload(self, upload):
+        MAX_FILE_SIZE = 4 * 1024 * 1024
+        if upload.data and upload.data.filename:
+            file = upload.data
+            file.seek(0, os.SEEK_END)
+            file_size = file.tell()
+            file.seek(0)
             if file_size > MAX_FILE_SIZE:
-                raise ValidationError('Размер файла должен быть меньше 2 MB.')
+                raise ValidationError('Размер файла должен быть меньше 4 MB.')
 
     def validate_username(self, username):
         if username.data != self.original_username:
