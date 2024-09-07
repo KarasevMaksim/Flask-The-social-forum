@@ -14,6 +14,7 @@ from flask_wtf.file import (
 )
 from app import db
 from app.models import Users
+from app.funcs import validate_file_size
 
 
 
@@ -77,15 +78,13 @@ class EditProfileForm(FlaskForm):
         self.original_email = original_email
         
     def validate_upload(self, upload):
-        MAX_FILE_SIZE = 4 * 1024 * 1024
-        if upload.data and upload.data.filename:
-            file = upload.data
-            file.seek(0, os.SEEK_END)
-            file_size = file.tell()
-            file.seek(0)
-            if file_size > MAX_FILE_SIZE:
-                raise ValidationError('Размер файла должен быть меньше 4 MB.')
+        if upload.data:
+            check, size = validate_file_size(upload.data, avatar=True)
+            if not check:
+                raise ValidationError(
+                    f'Размер файла должен быть меньше {size // 1024 // 1024} MB.')
 
+            
     def validate_username(self, username):
         if username.data != self.original_username:
             user = db.session.scalar(sa.select(Users).where(
@@ -102,7 +101,14 @@ class EditProfileForm(FlaskForm):
     
     
 class ContentFormMedia(FlaskForm):
-    upload = MultipleFileField('Выберите файл', validators=[FileRequired()])
+    upload = MultipleFileField('Выберите файл', validators=
+                               [FileRequired(),
+                                FileAllowed(['jpg', 'png',
+                                             'jepeg', 'gif',
+                                             'mp4', 'webm'],
+                                            'Только .jpg .png .gif .mp4 .webm!'
+                                            )
+                                ])
 
     name_content = StringField('Название контента', validators=
                         [DataRequired(message=
@@ -123,10 +129,24 @@ class ContentFormMedia(FlaskForm):
                                                         ('games', 'Games')])
 
     submit = SubmitField('Загрузить')
+    
+    
+    def validate_upload(self, upload):
+        if upload.data:
+            check, size = validate_file_size(upload.data)
+            if not check:
+                raise ValidationError(
+                    f'Размер файла должен быть меньше {size // 1024 // 1024} MB.')
 
 
 class ContentFormPost(FlaskForm):
-    upload = FileField('Выберите файл')
+    upload = FileField('Выберите файл', validators=
+                               [FileAllowed(['jpg', 'png',
+                                             'jepeg', 'gif',
+                                             'mp4', 'webm'],
+                                            'Только .jpg .png .gif .mp4 .webm!'
+                                            )
+                                ])
     name_content = StringField('Название контента', validators=
                         [DataRequired(message=
                         'Поле не может быть пустым!'), 
@@ -148,3 +168,11 @@ class ContentFormPost(FlaskForm):
     private = BooleanField('Приватный контент?')
     nsfw = BooleanField('Это NSFW?')
     submit = SubmitField('Загрузить')
+    
+    
+    def validate_upload(self, upload):
+        if upload.data:
+            check, size = validate_file_size(upload.data)
+            if not check:
+                raise ValidationError(
+                    f'Размер файла должен быть меньше {size // 1024 // 1024} MB.')

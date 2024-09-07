@@ -13,7 +13,14 @@
         {{ form.name_content() }}</p>
     <p>{{ form.tag_content.label }}<br>
         {{ form.tag_content() }}</p>
-    <p>{{ form.upload() }}</p>
+    <p>
+        {{ form.upload() }}
+        {% for error in form.upload.errors %}
+            <div class="alert alert-danger" style="color: red;" role="alert">
+                {{ error }}
+            </div>
+        {% endfor %}
+    </p>
     <p>{{ form.private.label }} {{ form.private() }}</p>
     <p>{{ form.nsfw.label }} {{ form.nsfw() }}</p>
     <p>{{ form.type_content.label }} {{ form.type_content() }}</p>
@@ -31,7 +38,14 @@
         {{ form.text_content() }}</p>
     <p>{{ form.tag_content.label }}<br>
         {{ form.tag_content() }}</p>
-    <p>{{ form.upload() }}</p>
+    <p>
+        {{ form.upload() }}
+        {% for error in form.upload.errors %}
+            <div class="alert alert-danger" style="color: red;" role="alert">
+                {{ error }}
+            </div>
+        {% endfor %}
+    </p>
     <p>{{ form.private.label }} {{ form.private() }}</p>
     <p>{{ form.nsfw.label }} {{ form.nsfw() }}</p>
     <p>{{ form.submit(type="submit", class="btn") }}</p>

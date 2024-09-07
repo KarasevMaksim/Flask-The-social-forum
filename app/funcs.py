@@ -120,3 +120,37 @@ def save_content(*args):
     )
     
     return path_to_save, path_to_db
+
+
+def validate_file_size(upload, avatar=False):
+    MAX_FILE_SIZE = 300 * 1024 * 1024
+    
+    def check_size(item):
+        nonlocal MAX_FILE_SIZE
+        if avatar:
+            MAX_FILE_SIZE = 4 * 1024 * 1024
+        else:
+            file_ext = os.path.splitext(item.filename)[-1]
+            if not file_ext in ('.mp4', '.webm'):
+                MAX_FILE_SIZE = 10 * 1024 * 1024
+            else:
+                MAX_FILE_SIZE = 300 * 1024 * 1024
+            
+        file = item
+        file.seek(0, os.SEEK_END)
+        file_size = file.tell()
+        file.seek(0)
+        
+        return False if file_size > MAX_FILE_SIZE else True
+
+    
+    if isinstance(upload, list):
+        size_result = all(map(check_size, upload))
+    else:
+        size_result = check_size(upload)
+    
+        
+    if not size_result:
+        return False, MAX_FILE_SIZE
+    else:
+        return True, None
