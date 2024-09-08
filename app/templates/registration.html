@@ -12,7 +12,7 @@
     {{ form.username.label }}<br>
     {{ form.username(class="form-control") }}<br>
     {% for error in form.username.errors %}
-        <div class="alert alert-danger" role="alert">
+        <div class="alert alert-danger" style="color: red;" role="alert">
           {{ error }}
         </div>
     {% endfor %}
@@ -21,7 +21,7 @@
     {{ form.email.label }}<br>
     {{ form.email(class="form-control") }}<br>
     {% for error in form.email.errors %}
-        <div class="alert alert-danger" role="alert">
+        <div class="alert alert-danger" style="color: red;" role="alert">
           {{ error }}
         </div>
     {% endfor %}
@@ -30,7 +30,7 @@
     {{ form.password1.label }}<br>
     {{ form.password1(class="form-control", type="password") }}<br>
     {% for error in form.password1.errors %}
-        <div class="alert alert-danger" role="alert">
+        <div class="alert alert-danger" style="color: red;" role="alert">
           {{ error }}
         </div>
     {% endfor %}
@@ -39,17 +39,21 @@
     {{ form.password2.label }}<br>
     {{ form.password2(class="form-control", type="password") }}<br>
     {% for error in form.password2.errors %}
-        <div class="alert alert-danger" role="alert">
+        <div class="alert alert-danger" style="color: red;" role="alert">
           {{ error }}
         </div>
     {% endfor %}
   </p>
-  <p>{{ form.site_rules() }}<span>Я согласен с </span>
-    <a href="{{ url_for('site_rules') }}">правилами</a><span> площадки!</span></p>
+  <p>
+    {{ form.site_rules() }}<span>Я согласен с </span>
+    <a href="{{ url_for('site_rules') }}">правилами</a><span> площадки!</span>
+    {% for error in form.site_rules.errors %}
+        <div class="alert alert-danger" style="color: red;" role="alert">
+            {{ error }}
+        </div>
+    {% endfor %}
+  </p>
   <p>{{ form.submit(type="submit", class="btn") }}</p>
-  {% for message in get_flashed_messages() %}
-      <div style="color: red;">{{ message }}</div>
-  {% endfor %}
 </form>
 
 {% endblock%}

@@ -2,6 +2,7 @@ import secrets
 import os
 import io
 
+from werkzeug.utils import secure_filename
 from flask import current_app, url_for
 from flask_login import current_user
 from PIL import Image
@@ -91,7 +92,7 @@ def resized_image(img, x=300, y=300):
 def save_content(*args):
     new_files_name = tuple(
         map(
-            lambda file: f"{secrets.token_hex(10)}{os.path.splitext(file.filename)[1]}",
+            lambda file: f"{secrets.token_hex(10)}{os.path.splitext(secure_filename(file.filename))[1]}",
             args,
         )
     )
@@ -134,3 +135,36 @@ def delete_file_in_dir(dir_links):
             os.remove(full_path)
         except Exception:
             pass
+
+def validate_file_size(upload, avatar=False):
+    MAX_FILE_SIZE = 300 * 1024 * 1024
+    
+    def check_size(item):
+        nonlocal MAX_FILE_SIZE
+        if avatar:
+            MAX_FILE_SIZE = 4 * 1024 * 1024
+        else:
+            file_ext = os.path.splitext(item.filename)[-1]
+            if not file_ext in ('.mp4', '.webm'):
+                MAX_FILE_SIZE = 10 * 1024 * 1024
+            else:
+                MAX_FILE_SIZE = 300 * 1024 * 1024
+            
+        file = item
+        file.seek(0, os.SEEK_END)
+        file_size = file.tell()
+        file.seek(0)
+        
+        return False if file_size > MAX_FILE_SIZE else True
+
+    
+    if isinstance(upload, list):
+        size_result = all(map(check_size, upload))
+    else:
+        size_result = check_size(upload)
+    
+        
+    if not size_result:
+        return False, MAX_FILE_SIZE
+    else:
+        return True, None

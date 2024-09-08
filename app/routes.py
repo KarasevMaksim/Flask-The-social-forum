@@ -1,6 +1,7 @@
 import sqlalchemy as sa
 
 from urllib.parse import urlsplit
+from werkzeug.utils import secure_filename
 from flask import (
     render_template, url_for, redirect, abort, flash, request
 )
@@ -77,6 +78,7 @@ def login():
 
 
 @app.route('/logout')
+@login_required
 def logout():
     logout_user()
     return redirect(url_for('index'))
@@ -90,22 +92,18 @@ def registration():
     form = RegForm()
     
     if form.validate_on_submit():
-        if form.site_rules.data:
-            try:
-                user = Users()
-                user.username = form.username.data
-                user.email = form.email.data
-                user.set_password(form.password1.data)
-                db.session.add(user)
-                db.session.commit()
-                return redirect(url_for('login'))
-            except Exception as err:
-                db.session.rollback()
-                print(err)
-                
-        flash('Вы обязаны согласиться с правилами сайта!')
-        return redirect(url_for('registration'))
-    
+        try:
+            user = Users()
+            user.username = form.username.data
+            user.email = form.email.data
+            user.set_password(form.password1.data)
+            db.session.add(user)
+            db.session.commit()
+            return redirect(url_for('login'))
+        except Exception as err:
+            db.session.rollback()
+            print(err)
+                   
     return render_template(
         'registration.html',
         title='Registration',
@@ -140,7 +138,8 @@ def edit_profile():
     if form.validate_on_submit():
         if form.upload.data:
             file = form.upload.data
-            path_to_save, path_to_db = set_new_avatar(file.filename)
+            path_to_save, path_to_db = set_new_avatar(secure_filename(
+                                                                file.filename))
             file, save_gif = resized_image(file)
             
             if not save_gif:
@@ -263,11 +262,13 @@ def create_post():
     
     if form.validate_on_submit():
         file = form.upload.data
-        puth_to_save, puth_to_db = save_content(file)
+        if file:
+            puth_to_save, puth_to_db = save_content(file)
         try:
             section = Sections().query.filter(Sections.name == 'posts').first()
-                      
-            link_db = LinkContents(name=next(puth_to_db))
+            
+            if file:          
+                link_db = LinkContents(name=next(puth_to_db))
             
             new_tags = form.tag_content.data.split()
             tags = list(map(
@@ -284,7 +285,8 @@ def create_post():
                 content.is_private = True
             if form.nsfw.data:
                 content.nsfw = True
-            content.link_for_content.append(link_db)
+            if file:
+                content.link_for_content.append(link_db)
             content.user_id = current_user.get_id()
             for tag in tags:
                 db.session.add(tag)
@@ -293,7 +295,8 @@ def create_post():
             db.session.add(content)   
             db.session.commit()
             
-            file.save(next(puth_to_save))
+            if file:
+                file.save(next(puth_to_save))
             
         except Exception as err:
             db.session.rollback()
