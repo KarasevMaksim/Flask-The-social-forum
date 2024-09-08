@@ -189,8 +189,6 @@ class ContentFormMedia(FlaskForm):
         
         list_tags = tag_content.data.split()
         
-        print('\n\n\n', list_tags, len(list_tags))
-        
         if len(list_tags) > 20:
             raise ValidationError('Максимальное количество тегов 20!')
         
@@ -243,8 +241,6 @@ class ContentFormPost(FlaskForm):
             raise ValidationError('Поле не может быть пустым!')
         
         list_tags = tag_content.data.split()
-        
-        print('\n\n\n', list_tags, len(list_tags))
         
         if len(list_tags) > 20:
             raise ValidationError('Максимальное количество тегов 20!')
