@@ -231,11 +231,13 @@ def create_post():
     
     if form.validate_on_submit():
         file = form.upload.data
-        puth_to_save, puth_to_db = save_content(file)
+        if file:
+            puth_to_save, puth_to_db = save_content(file)
         try:
             section = Sections().query.filter(Sections.name == 'posts').first()
-                      
-            link_db = LinkContents(name=next(puth_to_db))
+            
+            if file:          
+                link_db = LinkContents(name=next(puth_to_db))
             
             new_tags = form.tag_content.data.split()
             tags = list(map(
@@ -252,7 +254,8 @@ def create_post():
                 content.is_private = True
             if form.nsfw.data:
                 content.nsfw = True
-            content.link_for_content.append(link_db)
+            if file:
+                content.link_for_content.append(link_db)
             content.user_id = current_user.get_id()
             for tag in tags:
                 db.session.add(tag)
@@ -261,7 +264,8 @@ def create_post():
             db.session.add(content)   
             db.session.commit()
             
-            file.save(next(puth_to_save))
+            if file:
+                file.save(next(puth_to_save))
             
         except Exception as err:
             db.session.rollback()
