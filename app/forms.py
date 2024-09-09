@@ -21,41 +21,72 @@ from config import Config
 
 
 class LoginForm(FlaskForm):
-    username = StringField('Логин',
-                        [DataRequired(message='Поле не может быть пустым!'),
-                        Length(min=4, max=20, message='от 4 до 20 символов!'),
-                        Regexp(r'^[a-zA-Zа-яА-Я0-9_]+$', message="Имя пользователя может содержать только буквы, цифры и подчеркивания.")
-                        ])
+    username = StringField(
+        'Логин',
+        [
+            DataRequired(message='Поле не может быть пустым!'),
+            Length(min=4, max=20, message='от 4 до 20 символов!'),
+            Regexp(
+                r'^[a-zA-Zа-яА-Я0-9_]+',
+                message="Имя пользователя может содержать только буквы, цифры и подчеркивания."
+            )
+        ]
+    )
+
+    password = PasswordField(
+        'Пароль',
+        validators=[
+            DataRequired(message='Поле не может быть пустым!'),
+            Length(min=6, max=18, message='от 6 до 18 символов!')
+        ]
+    )
     
-    password = PasswordField('Пароль', validators=[DataRequired(message=
-                                                'Поле не может быть пустым!'),
-                                                   Length(min=6, max=18)])
     remember_me = BooleanField('Запомнить меня')
+    
     submit = SubmitField('Войти')
     
     
 class RegForm(FlaskForm):
-    username = StringField('Логин', validators=
-                        [DataRequired(message=
-                        'Поле не может быть пустым!'), 
-                         Length(min=4, max=20, message='от 4 до 20 символов!'),
-                         Regexp(r'^[a-zA-Zа-яА-Я0-9_]+$', message="Имя пользователя может содержать только буквы, цифры и подчеркивания.")
-                         ])
+    username = StringField(
+        'Логин',
+        validators=[
+            DataRequired(message='Поле не может быть пустым!'),
+            Length(min=4, max=20, message='от 4 до 20 символов!'),
+            Regexp(
+                r'^[a-zA-Zа-яА-Я0-9_]+',
+                message="Имя пользователя может содержать только буквы, цифры и подчеркивания."
+            )
+        ]
+    )
     
-    email = EmailField('Email', validators=
-                       [DataRequired(message='Поле не может быть пустым!'), 
-                        Email(message='Не верный email!'),
-                        Length(min=4, max=60, message='от 4 до 60 символов'),
-                        Regexp(r'^[a-zA-Z0-9_@.-]+$', message="Не корректные символы в email")
-                        ])
-    
-    password1 = PasswordField('Пароль', validators=
-                        [DataRequired(message='Поле не может быть пустым!'),
-                         Length(min=6, max=18, message='от 6, до 18 символов!')])
-    
-    password2 = PasswordField('Повторите пароль', validators=
-                        [EqualTo('password1', message='Пароли не совпадают'),
-                         DataRequired()])
+    email = EmailField(
+        'Email',
+        validators=[
+            DataRequired(message='Поле не может быть пустым!'),
+            Email(message='Не верный email!'),
+            Length(min=4, max=60, message='от 4 до 60 символов'),
+            Regexp(
+                r'^[a-zA-Z0-9_@.-]+',
+                message="Не корректные символы в email"
+            )
+        ]
+    )
+
+    password1 = PasswordField(
+        'Пароль',
+        validators=[
+            DataRequired(message='Поле не может быть пустым!'),
+            Length(min=6, max=18, message='от 6 до 18 символов!')
+        ]
+    )
+
+    password2 = PasswordField(
+        'Повторите пароль',
+        validators=[
+            EqualTo('password1', message='Пароли не совпадают'),
+            DataRequired()
+        ]
+    )
     
     site_rules = BooleanField()
     
@@ -68,46 +99,84 @@ class RegForm(FlaskForm):
         if not isinstance(site_rules.data, bool):
             raise ValidationError('This field must be a boolean value.')
     
-    
-    def validate_username(self, username):
-        firbiden_check = any(map(lambda reg: True if re.search(reg, username.data, re.IGNORECASE) else False, Config.FORBIDDEN_NAME_REGX))
-        if firbiden_check:
-            raise ValidationError('Запрещенное имя!')
         
-        user = db.session.scalar(sa.select(Users).where(
-            Users.username == username.data))
+    def validate_username(self, username):
+        forbidden_check = any(
+            map(
+                lambda reg: bool(re.search(reg, username.data, re.IGNORECASE)),
+                Config.FORBIDDEN_NAME_REGX
+            )
+        )
+        if forbidden_check:
+            raise ValidationError('Запрещенное имя!')
+
+        user = db.session.scalar(
+            sa.select(Users).where(Users.username == username.data)
+        )
         if user is not None:
             raise ValidationError('Данное имя уже занято!')
-
-    def validate_email(self, email):
-        firbiden_check = any(map(lambda reg: True if re.search(reg, email.data, re.IGNORECASE) else False, Config.FORBIDDEN_NAME_REGX))
-        if firbiden_check:
-            raise ValidationError('Запрещенный email!')
         
-        user = db.session.scalar(sa.select(Users).where(
-            Users.email == email.data))
+        
+    def validate_email(self, email):
+        forbidden_check = any(
+            map(
+                lambda reg: bool(re.search(reg, email.data, re.IGNORECASE)),
+                Config.FORBIDDEN_NAME_REGX
+            )
+        )
+        if forbidden_check:
+            raise ValidationError('Запрещенный email!')
+
+        user = db.session.scalar(
+            sa.select(Users).where(Users.email == email.data)
+        )
         if user is not None:
-            raise ValidationError('Данный email адресс ужу занят!')
+            raise ValidationError('Данный email адрес уже занят!')
         
         
 class EditProfileForm(FlaskForm):
-    upload = FileField('Выберите файл', validators=[FileAllowed(['jpg', 'png', 'jepeg', 'gif'], 'Только изображения!')])
-    username = StringField('Изменить имя профиля', validators=
-                        [DataRequired(message=
-                        'Поле не может быть пустым!'), 
-                         Length(min=4, max=20, message='от 4 до 20 символов!'),
-                         Regexp(r'^[a-zA-Zа-яА-Я0-9_]+$', message="Имя пользователя может содержать только буквы, цифры и подчеркивания.")
-                         ])
+    upload = FileField(
+        'Выберите файл',
+        validators=[
+            FileAllowed(['jpg', 'png', 'jpeg', 'gif'], 'Только изображения!')
+        ]
+    )
+
+    username = StringField(
+        'Изменить имя профиля',
+        validators=[
+            DataRequired(message='Поле не может быть пустым!'),
+            Length(
+                min=4,
+                max=20,
+                message='от 4 до 20 символов!'
+            ),
+            Regexp(
+                r'^[a-zA-Zа-яА-Я0-9_]+',
+                message=
+                "Имя пользователя может содержать только буквы, цифры и подчеркивания."
+            )
+        ]
+    )
     
-    email = StringField('Изменить email адресс', validators=
-                       [DataRequired(message='Поле не может быть пустым!'), 
-                        Email(message='Не верный email!'),
-                        Length(min=4, max=60, message='от 4 до 60 символов'),
-                        Regexp(r'^[a-zA-Z0-9_@.-]+$', message="Не корректные символы в email")
-                        ])
+    email = StringField(
+        'Изменить email адресс',
+        validators=[
+            DataRequired(message='Поле не может быть пустым!'),
+            Email(message='Не верный email!'),
+            Length(min=4, max=60, message='от 4 до 60 символов'),
+            Regexp(r'^[a-zA-Z0-9_@.-]+$', message="Не корректные символы в email"
+            )
+        ]
+    )
     
-    about_me = TextAreaField('Изменить информацию обо мне', validators=[Length(min=0, max=500)])
+    about_me = TextAreaField(
+        'Изменить информацию обо мне',
+        validators=[Length(min=0, max=500)]
+    )
+    
     submit = SubmitField('Изменить')
+    
     
     def __init__(self, original_username, original_email, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -119,58 +188,87 @@ class EditProfileForm(FlaskForm):
             check, size = validate_file_size(upload.data, avatar=True)
             if not check:
                 raise ValidationError(
-                    f'Размер файла должен быть меньше {size // 1024 // 1024} MB.')
+                    f'Размер файла должен быть меньше {size // 1024 // 1024} MB.'
+                )
 
             
     def validate_username(self, username):
-        firbiden_check = any(map(lambda reg: True if re.search(reg, username.data, re.IGNORECASE) else False, Config.FORBIDDEN_NAME_REGX))
-        if firbiden_check:
+        forbidden_check = any(
+            map(
+                lambda reg: bool(re.search(reg, username.data, re.IGNORECASE)),
+                Config.FORBIDDEN_NAME_REGX
+            )
+        )
+        if forbidden_check:
             raise ValidationError('Запрещенное имя!')
-        
+
         if username.data != self.original_username:
-            user = db.session.scalar(sa.select(Users).where(
-                Users.username == username.data))
+            user = db.session.scalar(
+                sa.select(Users).where(
+                    Users.username == username.data
+                )
+            )
             if user is not None:
                 raise ValidationError('Данное имя пользователя уже занято.')
+
             
     def validate_email(self, email):
-        firbiden_check = any(map(lambda reg: True if re.search(reg, email.data, re.IGNORECASE) else False, Config.FORBIDDEN_NAME_REGX))
-        if firbiden_check:
+        forbidden_check = any(
+            map(
+                lambda reg: bool(re.search(reg, email.data, re.IGNORECASE)),
+                Config.FORBIDDEN_NAME_REGX
+            )
+        )
+        if forbidden_check:
             raise ValidationError('Запрещенный email!')
-        
+
         if email.data != self.original_email:
-            user = db.session.scalar(sa.select(Users).where(
-                Users.email == email.data))
+            user = db.session.scalar(
+                sa.select(Users).where(
+                    Users.email == email.data
+                )
+            )
             if user is not None:
-                raise ValidationError('Данный email адресс уже занят.')
-    
+                raise ValidationError('Данный email адрес уже занят.')
+
     
 class ContentFormMedia(FlaskForm):
-    upload = MultipleFileField('Выберите файл', validators=
-                               [FileRequired(),
-                                FileAllowed(['jpg', 'png',
-                                             'jepeg', 'gif',
-                                             'mp4', 'webm'],
-                                            'Только .jpg .png .gif .mp4 .webm!'
-                                            )
-                                ])
+    upload = MultipleFileField(
+        'Выберите файл',
+        validators=[
+            FileRequired(),
+            FileAllowed(
+                ['jpg', 'png', 'jpeg', 'gif', 'mp4', 'webm'],
+                'Только .jpg .png .gif .mp4 .webm!'
+            )
+        ]
+    )
 
-    name_content = StringField('Название контента', validators=
-                        [DataRequired(message=
-                        'Поле не может быть пустым!'), 
-                         Length(min=2, max=80, message=
-                                "Название от 2 до 80 символов!")])
+    name_content = StringField(
+        'Название контента',
+        validators=[
+            DataRequired(message='Поле не может быть пустым!'),
+            Length(min=2, max=80, message="Название от 2 до 80 символов!")
+        ]
+    )
 
-    tag_content = StringField('Введите теги через пробел', validators=
-                        [DataRequired(message=
-                        'Поле не может быть пустым!') 
-                        ])
+    tag_content = StringField(
+        'Введите теги через пробел',
+        validators=[DataRequired(message='Поле не может быть пустым!')]
+    )
 
     private = BooleanField('Приватный контент?')
+    
     nsfw = BooleanField('Это NSFW?')
-    type_content = SelectField('Тип контента', choices=[('pictures', 'Pictures'),
-                                                        ('videos', 'Videos'),
-                                                        ('games', 'Games')])
+    
+    type_content = SelectField(
+        'Тип контента',
+        choices=[
+            ('pictures', 'Pictures'),
+            ('videos', 'Videos'),
+            ('games', 'Games')
+        ]
+    )
 
     submit = SubmitField('Загрузить')
     
@@ -192,39 +290,60 @@ class ContentFormMedia(FlaskForm):
         if len(list_tags) > 20:
             raise ValidationError('Максимальное количество тегов 20!')
         
-        check_len_all_tags = all(map(lambda tag: len(tag) <= 20, list_tags))
+        check_len_all_tags = all(
+            map(
+                lambda tag: len(tag) <= 20, list_tags
+            )
+        )
         if not check_len_all_tags:
-            raise ValidationError('Максимальная дляна одного тега, не более 20 символов!')
-        
+            raise ValidationError(
+                'Максимальная дляна одного тега, не более 20 символов!'
+            )
 
 
 class ContentFormPost(FlaskForm):
-    upload = FileField('Выберите файл', validators=
-                               [FileAllowed(['jpg', 'png',
-                                             'jepeg', 'gif',
-                                             'mp4', 'webm'],
-                                            'Только .jpg .png .gif .mp4 .webm!'
-                                            )
-                                ])
-    name_content = StringField('Название контента', validators=
-                        [DataRequired(message=
-                        'Поле не может быть пустым!'), 
-                         Length(min=2, max=80, message=
-                                "Название от 2 до 80 символов!")])
+    upload = FileField(
+        'Выберите файл',
+        validators=[
+            FileAllowed([
+                'jpg', 'png',
+                'jpeg', 'gif',
+                'mp4', 'webm'
+            ],
+                'Только .jpg .png .gif .mp4 .webm!'
+            )
+        ]
+    )
+    
+    name_content = StringField(
+        'Название контента',
+        validators=[
+            DataRequired(message='Поле не может быть пустым!'), 
+            Length(min=2, max=80, message="Название от 2 до 80 символов!")
+        ]
+    )
 
-    tag_content = StringField('Введите теги через пробел', validators=
-                        [DataRequired(message=
-                        'Поле не может быть пустым!')
-                        ])
+    tag_content = StringField(
+        'Введите теги через пробел',
+        validators=[
+            DataRequired(message='Поле не может быть пустым!')
+        ]
+    )
 
-    text_content = TextAreaField('Напишите свой пост!', validators=
-                        [DataRequired(message=
-                        'Поле не может быть пустым!'), 
-                         Length(min=10, max=10000, message=
-                                "Текст от 10 до 10000 символов!")])
+    text_content = TextAreaField(
+        'Напишите свой пост!',
+        validators=[
+            DataRequired(message='Поле не может быть пустым!'), 
+            Length(min=10, max=10000, message=
+                   "Текст от 10 до 10000 символов!"
+            )
+        ]
+    )
 
     private = BooleanField('Приватный контент?')
+    
     nsfw = BooleanField('Это NSFW?')
+    
     submit = SubmitField('Загрузить')
     
     
@@ -245,12 +364,17 @@ class ContentFormPost(FlaskForm):
         if len(list_tags) > 20:
             raise ValidationError('Максимальное количество тегов 20!')
         
-        check_len_all_tags = all(map(lambda tag: len(tag) <= 20, list_tags))
+        check_len_all_tags = all(
+            map(
+                lambda tag: len(tag) <= 20, list_tags
+            )
+        )
         if not check_len_all_tags:
-            raise ValidationError('Максимальная дляна одного тега, не более 20 символов!')
+            raise ValidationError(
+                'Максимальная дляна одного тега, не более 20 символов!'
+            )
 
     
-
 class DeleatPost(FlaskForm):
     confirm = BooleanField('Удалить пост?')
     submit = SubmitField('Удалить!')
