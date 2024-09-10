@@ -210,15 +210,19 @@ def create_media():
         
         try:
             section = Sections().query.filter(
-                Sections.name == form.type_content.data).first()
+                Sections.name == form.type_content.data
+                ).first()
                       
             links_db = map(lambda elem: LinkContents(name=elem), path_to_db)
 
             new_tags = form.tag_content.data.split()
-            tags = list(map(
-                lambda tag: Tags(name=tag.lower())
-                if not (obj := Tags.query.filter(Tags.name == tag).first())
-                else obj, new_tags))
+            tags = list(
+                map(
+                    lambda tag: Tags(name=tag.lower()) if not 
+                    (obj := Tags.query.filter(Tags.name == tag).first())
+                    else obj, new_tags
+                )
+            )
                 
             content = UserContents()
             content.section_id = section.id
@@ -271,10 +275,13 @@ def create_post():
                 link_db = LinkContents(name=next(puth_to_db))
             
             new_tags = form.tag_content.data.split()
-            tags = list(map(
-                lambda tag: Tags(name=tag.lower())
-                if not (obj := Tags.query.filter(Tags.name == tag).first())
-                else obj, new_tags))
+            tags = list(
+                map(
+                    lambda tag: Tags(name=tag.lower())
+                    if not (obj := Tags.query.filter(Tags.name == tag).first())
+                    else obj, new_tags
+                )
+            )
             
             content = UserContents()
             content.section_id = section.id
