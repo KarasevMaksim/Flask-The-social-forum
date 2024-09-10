@@ -52,7 +52,7 @@ def set_new_avatar(picture_name):
 
 
 def resized_image(img, x=300, y=300):
-    if not os.path.splitext(img.filename)[1] == '.gif':
+    if not os.path.splitext(secure_filename(img.filename))[1] == '.gif':
         img = Image.open(img)
         img.thumbnail((x, y))
         return img, False
@@ -65,8 +65,7 @@ def resized_image(img, x=300, y=300):
             while True:
                 frame = img.copy()
                 new_size = (int(frame.width * scale_factor), 
-                            int(frame.height * scale_factor)
-                            )
+                            int(frame.height * scale_factor))
                 resized_frame = frame.resize(new_size)
                 frames.append(resized_frame)
                 img.seek(img.tell() + 1)
@@ -92,8 +91,9 @@ def resized_image(img, x=300, y=300):
 def save_content(*args):
     new_files_name = tuple(
         map(
-            lambda file: f"{secrets.token_hex(10)}{os.path.splitext(secure_filename(file.filename))[1]}",
-            args,
+            lambda file: f"{secrets.token_hex(
+                10)}{os.path.splitext(secure_filename(file.filename))[1]}",
+            args
         )
     )
      
@@ -111,13 +111,11 @@ def save_content(*args):
     path_to_db = map(
         lambda name: os.path.join(
             'img', 'user_content', current_user.username, name
-        ).replace('\\', '/'),
-     new_files_name
+        ).replace('\\', '/'), new_files_name
     )
 
     path_to_save = map(
-        lambda name: os.path.join(full_path, name),
-        new_files_name
+        lambda name: os.path.join(full_path, name), new_files_name
     )
     
     return path_to_save, path_to_db
@@ -136,6 +134,7 @@ def delete_file_in_dir(dir_links):
         except Exception:
             pass
 
+
 def validate_file_size(upload, avatar=False):
     MAX_FILE_SIZE = 300 * 1024 * 1024
     
@@ -144,7 +143,7 @@ def validate_file_size(upload, avatar=False):
         if avatar:
             MAX_FILE_SIZE = 4 * 1024 * 1024
         else:
-            file_ext = os.path.splitext(item.filename)[-1]
+            file_ext = os.path.splitext(secure_filename(item.filename))[-1]
             if not file_ext in ('.mp4', '.webm'):
                 MAX_FILE_SIZE = 10 * 1024 * 1024
             else:
@@ -156,14 +155,12 @@ def validate_file_size(upload, avatar=False):
         file.seek(0)
         
         return False if file_size > MAX_FILE_SIZE else True
-
     
     if isinstance(upload, list):
         size_result = all(map(check_size, upload))
     else:
         size_result = check_size(upload)
     
-        
     if not size_result:
         return False, MAX_FILE_SIZE
     else:
